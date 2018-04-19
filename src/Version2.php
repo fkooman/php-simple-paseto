@@ -24,6 +24,8 @@ use ParagonIE\ConstantTime\Binary;
 
 class Version2
 {
+    const PASETO_HEADER = 'v2.public.';
+
     /**
      * Sign a message. Public-key digital signatures.
      *
@@ -39,13 +41,12 @@ class Version2
             throw new PasetoException('Invalid secret key length.');
         }
 
-        $header = 'v2.public.';
         $signature = \sodium_crypto_sign_detached(
-            self::preAuthEncode([$header, $data, $footer]),
+            self::preAuthEncode([self::PASETO_HEADER, $data, $footer]),
             $key
         );
 
-        $message = $header.self::encode($data.$signature);
+        $message = self::PASETO_HEADER.self::encode($data.$signature);
         if ('' === $footer) {
             return $message;
         }
@@ -69,12 +70,7 @@ class Version2
         }
 
         $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
-
-        $expectHeader = 'v2.public.';
-        $givenHeader = Binary::safeSubstr($signMsg, 0, 10);
-        if (!\hash_equals($expectHeader, $givenHeader)) {
-            throw new PasetoException('Invalid message header.');
-        }
+        self::verifyHeader($signMsg);
         $decoded = Base64UrlSafe::decode(Binary::safeSubstr($signMsg, 10));
         $len = Binary::safeStrlen($decoded);
         // Separate the decoded bundle into the message and signature.
@@ -82,7 +78,7 @@ class Version2
         $signature = Binary::safeSubstr($decoded, $len - SODIUM_CRYPTO_SIGN_BYTES);
         $valid = \sodium_crypto_sign_verify_detached(
             $signature,
-            self::preAuthEncode([$givenHeader, $message, $footer]),
+            self::preAuthEncode([self::PASETO_HEADER, $message, $footer]),
             $key
         );
         if (false === $valid) {
@@ -99,12 +95,7 @@ class Version2
      */
     public static function getFooter($tainted)
     {
-        $expectHeader = 'v2.public.';
-        $givenHeader = Binary::safeSubstr($tainted, 0, 10);
-        if (!\hash_equals($expectHeader, $givenHeader)) {
-            throw new PasetoException('Invalid message header.');
-        }
-
+        self::verifyHeader($tainted);
         /** @var array<int, string> $pieces */
         $pieces = \explode('.', $tainted);
         $count = \count($pieces);
@@ -169,6 +160,19 @@ class Version2
         }
 
         return Binary::safeSubstr($payload, 0, $payload_len - $footer_len);
+    }
+
+    /**
+     * @param string $signMsg
+     *
+     * @return void
+     */
+    private static function verifyHeader($signMsg)
+    {
+        $givenHeader = Binary::safeSubstr($signMsg, 0, 10);
+        if (!\hash_equals(self::PASETO_HEADER, $givenHeader)) {
+            throw new PasetoException('Invalid message header.');
+        }
     }
 
     /**
