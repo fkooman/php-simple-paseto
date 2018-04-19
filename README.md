@@ -27,5 +27,5 @@ PHP >= 7. So I decided to make a tiny implementation that just supports
 
 # License 
 
-ISC, same as [paragonie/paseto](https://github.com/paragonie/paseto) as I took
-some code snippets from there.
+ISC, same as [paragonie/paseto](https://github.com/paragonie/paseto). I 
+copy/pasted some code snippets/docblocks from this library and used them here.
