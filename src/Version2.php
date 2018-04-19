@@ -164,6 +164,6 @@ class Version2
      */
     private static function encode($str)
     {
-        return rtrim(Base64UrlSafe::encode($str), '=');
+        return \rtrim(Base64UrlSafe::encode($str), '=');
     }
 }
