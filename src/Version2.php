@@ -62,15 +62,8 @@ class Version2
         $decoded = Base64UrlSafe::decode(Binary::safeSubstr($signMsg, 10));
         $len = Binary::safeStrlen($decoded);
         // Separate the decoded bundle into the message and signature.
-        $message = Binary::safeSubstr(
-            $decoded,
-            0,
-            $len - SODIUM_CRYPTO_SIGN_BYTES
-        );
-        $signature = Binary::safeSubstr(
-            $decoded,
-            $len - SODIUM_CRYPTO_SIGN_BYTES
-        );
+        $message = Binary::safeSubstr($decoded, 0, $len - SODIUM_CRYPTO_SIGN_BYTES);
+        $signature = Binary::safeSubstr($decoded, $len - SODIUM_CRYPTO_SIGN_BYTES);
         $valid = \sodium_crypto_sign_verify_detached(
             $signature,
             self::preAuthEncode([$givenHeader, $message, $footer]),
