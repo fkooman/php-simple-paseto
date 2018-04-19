@@ -143,7 +143,9 @@ class Version2
             return \pack('P', $n);
         }
 
-        // compat mode, PHP < 5.6.3, take from PASETO RFC pseudocode 
+        // compat mode, for PHP < 5.6.3, taken from PASETO RFC pseudocode
+        // pack('P') above is ~7 times faster than this implementation below
+        // (tested on PHP 7.1.16)
         $str = '';
         for ($i = 0; $i < 8; ++$i) {
             if (7 === $i) {
