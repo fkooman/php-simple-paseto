@@ -1,0 +1,36 @@
+{
+    "authors": [
+        {
+            "email": "fkooman@tuxed.net",
+            "name": "Fran\u00e7ois Kooman"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/sodium_compat.php"
+        ],
+        "psr-4": {
+            "fkooman\\Paseto\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "src/sodium_compat.php"
+        ],
+        "psr-4": {
+            "fkooman\\Paseto\\": "src/",
+            "fkooman\\Paseto\\Tests\\": "tests/"
+        }
+    },
+    "description": "Simple PASETO v2.public for PHP >= 5.4",
+    "license": "ISC",
+    "name": "fkooman/simple-paseto",
+    "require": {
+        "php": ">=5.4",
+        "paragonie/constant_time_encoding": "^1|^2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4|^5|^6|^7"
+    },
+    "type": "library"
+}
