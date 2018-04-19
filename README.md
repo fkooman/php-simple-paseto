@@ -12,7 +12,7 @@ please use [paragonie/paseto](https://github.com/paragonie/paseto).
 
 A tiny library that just implements `Version2::sign` and `Version2::verify` of 
 the [paragonie/paseto](https://github.com/paragonie/paseto) project. In 
-addition it has a `Version::extractFooter` method for extracting the footer 
+addition it has a `Version2::getFooter` method for extracting the footer 
 to select the correct public key for verifying the signature.
 
 It uses the official test vectors to make sure everything works as expected.
