@@ -26,11 +26,17 @@
     "license": "ISC",
     "name": "fkooman/simple-paseto",
     "require": {
+        "ext-hash": "*",
+        "paragonie/constant_time_encoding": "^1|^2",
         "php": ">=5.4",
-        "paragonie/constant_time_encoding": "^1|^2"
+        "symfony/polyfill-php56": "^1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4|^5|^6|^7"
+    },
+    "suggest": {
+        "ext-libsodium": "PHP < 7.2 sodium implementation",
+        "ext-sodium": "PHP >= 7.2 sodium implementation"
     },
     "type": "library"
 }
