@@ -19,19 +19,22 @@ class Version2
      */
     public static function sign($data, $key, $footer = '')
     {
-        // XXX validate secret key
+        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($key)) {
+            throw new PasetoException('invalid key length');
+        }
+
         $header = 'v2.public.';
         $signature = \sodium_crypto_sign_detached(
             self::preAuthEncode([$header, $data, $footer]),
             $key
         );
 
-        $message = $header.rtrim(Base64UrlSafe::encode($data.$signature), '=');
+        $message = $header.self::encode($data.$signature);
         if ('' === $footer) {
             return $message;
         }
 
-        return $message.'.'.rtrim(Base64UrlSafe::encode($footer), '=');
+        return $message.'.'.self::encode($footer);
     }
 
     /**
@@ -45,7 +48,10 @@ class Version2
      */
     public static function verify($signMsg, $key, $footer = '')
     {
-        // XXX validate public key
+        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($key)) {
+            throw new PasetoException('invalid key length');
+        }
+
         $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
 
         $expectHeader = 'v2.public.';
@@ -86,7 +92,12 @@ class Version2
      */
     public static function getFooter($tainted)
     {
-        // XXX make sure it starts with "v2.public."
+        $expectHeader = 'v2.public.';
+        $givenHeader = Binary::safeSubstr($tainted, 0, 10);
+        if (!\hash_equals($expectHeader, $givenHeader)) {
+            throw new PasetoException('Invalid message header.');
+        }
+
         /** @var array<int, string> $pieces */
         $pieces = \explode('.', $tainted);
         $count = \count($pieces);
@@ -138,7 +149,7 @@ class Version2
         if (empty($footer)) {
             return $payload;
         }
-        $footer = rtrim(Base64UrlSafe::encode($footer), '=');
+        $footer = self::encode($footer);
         $payload_len = Binary::safeStrlen($payload);
         $footer_len = Binary::safeStrlen($footer) + 1;
         $trailing = Binary::safeSubstr(
@@ -151,5 +162,15 @@ class Version2
         }
 
         return Binary::safeSubstr($payload, 0, $payload_len - $footer_len);
+    }
+
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    private static function encode($str)
+    {
+        return rtrim(Base64UrlSafe::encode($str), '=');
     }
 }
