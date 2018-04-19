@@ -20,7 +20,7 @@ class Version2
     public static function sign($data, $key, $footer = '')
     {
         if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($key)) {
-            throw new PasetoException('invalid key length');
+            throw new PasetoException('Invalid secret key length.');
         }
 
         $header = 'v2.public.';
@@ -49,7 +49,7 @@ class Version2
     public static function verify($signMsg, $key, $footer = '')
     {
         if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($key)) {
-            throw new PasetoException('invalid key length');
+            throw new PasetoException('Invalid public key length.');
         }
 
         $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
@@ -69,16 +69,14 @@ class Version2
             self::preAuthEncode([$givenHeader, $message, $footer]),
             $key
         );
-        if (!$valid) {
-            throw new PasetoException('invalid sig');
+        if (false === $valid) {
+            throw new PasetoException('Invalid signature.');
         }
 
         return $message;
     }
 
     /**
-     * Parse a string into a deconstructed PasetoMessage object.
-     *
      * @param string $tainted tainted user-provided string
      *
      * @return string
@@ -95,7 +93,7 @@ class Version2
         $pieces = \explode('.', $tainted);
         $count = \count($pieces);
         if ($count < 3 || $count > 4) {
-            throw new PasetoException('Truncated or invalid token');
+            throw new PasetoException('Truncated or invalid token.');
         }
 
         return $count > 3 ? Base64UrlSafe::decode($pieces[3]) : '';
@@ -151,7 +149,7 @@ class Version2
             $footer_len
         );
         if (!\hash_equals('.'.$footer, $trailing)) {
-            throw new PasetoException('Invalid message footer');
+            throw new PasetoException('Invalid message footer.');
         }
 
         return Binary::safeSubstr($payload, 0, $payload_len - $footer_len);
