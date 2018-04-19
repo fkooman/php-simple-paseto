@@ -122,14 +122,38 @@ class Version2
      */
     private static function preAuthEncode(array $pieces)
     {
-        $accumulator = \pack('P', \count($pieces) & PHP_INT_MAX);
+        $accumulator = self::LE64((int) (\count($pieces) & PHP_INT_MAX));
         foreach ($pieces as $piece) {
             $len = Binary::safeStrlen($piece);
-            $accumulator .= \pack('P', $len & PHP_INT_MAX);
+            $accumulator .= self::LE64((int) ($len & PHP_INT_MAX));
             $accumulator .= $piece;
         }
 
         return $accumulator;
+    }
+
+    /**
+     * @param int $n
+     *
+     * @return string
+     */
+    private static function LE64($n)
+    {
+        if (PHP_VERSION_ID >= 50603) {
+            return \pack('P', $n);
+        }
+
+        // compat mode, PHP < 5.6.3, take from PASETO RFC pseudocode 
+        $str = '';
+        for ($i = 0; $i < 8; ++$i) {
+            if (7 === $i) {
+                $n &= 127;
+            }
+            $str .= \pack('C', $n & 255);
+            $n = (int) ($n >> 8);
+        }
+
+        return $str;
     }
 
     /**
