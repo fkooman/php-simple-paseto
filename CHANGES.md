@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 0.1.3 (2018-04-20)
+- make it possible to not care about footer when verifying
+- rename `Version2::getFooter` to `Version2::extractFooter`
+
 ## 0.1.2 (2018-04-19)
 - fix for PHP < 5.6.3
 

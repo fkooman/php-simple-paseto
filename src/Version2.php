@@ -57,19 +57,28 @@ class Version2
     /**
      * Verify a signed message. Public-key digital signatures.
      *
-     * @param string $signMsg
-     * @param string $key
-     * @param string $footer
+     * @param string      $signMsg
+     * @param string      $key
+     * @param null|string $footer
      *
      * @return string
      */
-    public static function verify($signMsg, $key, $footer = '')
+    public static function verify($signMsg, $key, $footer = null)
     {
         if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($key)) {
             throw new PasetoException('Invalid public key length.');
         }
 
-        $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
+        if (null === $footer) {
+            // we do not care about the contents of footer at all, even if it
+            // is there...
+            $footer = self::extractFooter($signMsg);
+        } else {
+            // we do care about the contents of footer, and it MUST be the
+            // same as we request here
+            $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
+        }
+        $signMsg = self::removeFooter($signMsg);
         self::verifyHeader($signMsg);
         $decoded = Base64UrlSafe::decode(Binary::safeSubstr($signMsg, 10));
         $len = Binary::safeStrlen($decoded);
@@ -89,21 +98,36 @@ class Version2
     }
 
     /**
-     * @param string $tainted tainted user-provided string
+     * @param string $payload
      *
      * @return string
      */
-    public static function getFooter($tainted)
+    public static function extractFooter($payload)
     {
-        self::verifyHeader($tainted);
+        self::verifyHeader($payload);
         /** @var array<int, string> $pieces */
-        $pieces = \explode('.', $tainted);
+        $pieces = \explode('.', $payload);
         $count = \count($pieces);
         if ($count < 3 || $count > 4) {
             throw new PasetoException('Truncated or invalid token.');
         }
 
         return $count > 3 ? Base64UrlSafe::decode($pieces[3]) : '';
+    }
+
+    /**
+     * @param string $payload
+     *
+     * @return string
+     */
+    public static function removeFooter($payload)
+    {
+        $pieces = \explode('.', $payload);
+        if (\count($pieces) > 3) {
+            return \implode('.', \array_slice($pieces, 0, 3));
+        }
+
+        return $payload;
     }
 
     /**
@@ -170,7 +194,7 @@ class Version2
      */
     private static function validateAndRemoveFooter($payload, $footer = '')
     {
-        if (empty($footer)) {
+        if ('' === $footer) {
             return $payload;
         }
         $footer = self::encode($footer);

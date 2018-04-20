@@ -18,6 +18,7 @@
 
 namespace fkooman\Paseto\Tests;
 
+use fkooman\Paseto\Exception\PasetoException;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Binary;
 use PHPUnit\Framework\TestCase;
@@ -54,9 +55,9 @@ class Version2Test extends TestCase
             $this->assertInternalType('string', $signed);
             $this->assertSame('v2.public.', Binary::safeSubstr($signed, 0, 10));
             try {
-                Version2::verify($signed, $publicKey);
+                Version2::verify($signed, $publicKey, '');
                 $this->fail('Missing footer');
-            } catch (\Exception $ex) {
+            } catch (PasetoException $ex) {
             }
             $decode = Version2::verify($signed, $publicKey, 'footer');
             $this->assertInternalType('string', $decode);
@@ -64,18 +65,18 @@ class Version2Test extends TestCase
         }
     }
 
-    public function testGetFooter()
+    public function testExtractFooter()
     {
         $this->assertSame(
             '',
-            Version2::getFooter(
+            Version2::extractFooter(
                 'v2.public.eyJkYXRhIjoidGhpcyBpcyBhIHNpZ25lZCBtZXNzYWdlIiwiZXhwaXJlcyI6IjIwMTktMDEtMDFUMDA6MDA6MDArMDA6MDAifSUGY_L1YtOvo1JeNVAWQkOBILGSjtkX_9-g2pVPad7_SAyejb6Q2TDOvfCOpWYH5DaFeLOwwpTnaTXeg8YbUwI'
             )
         );
 
         $this->assertSame(
             'Paragon Initiative Enterprises',
-            Version2::getFooter(
+            Version2::extractFooter(
     'v2.public.eyJkYXRhIjoidGhpcyBpcyBhIHNpZ25lZCBtZXNzYWdlIiwiZXhwaXJlcyI6IjIwMTktMDEtMDFUMDA6MDA6MDArMDA6MDAifcMYjoUaEYXAtzTDwlcOlxdcZWIZp8qZga3jFS8JwdEjEvurZhs6AmTU3bRW5pB9fOQwm43rzmibZXcAkQ4AzQs.UGFyYWdvbiBJbml0aWF0aXZlIEVudGVycHJpc2Vz'
             )
         );
