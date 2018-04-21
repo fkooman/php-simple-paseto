@@ -27,8 +27,6 @@ class Version2
     const PASETO_HEADER = 'v2.public.';
 
     /**
-     * Sign a message. Public-key digital signatures.
-     *
      * @param string $data
      * @param string $key
      * @param string $footer
@@ -46,17 +44,15 @@ class Version2
             $key
         );
 
-        $message = self::PASETO_HEADER.self::encode($data.$signature);
+        $message = self::PASETO_HEADER.self::base64EncodeUnpadded($data.$signature);
         if ('' === $footer) {
             return $message;
         }
 
-        return $message.'.'.self::encode($footer);
+        return $message.'.'.self::base64EncodeUnpadded($footer);
     }
 
     /**
-     * Verify a signed message. Public-key digital signatures.
-     *
      * @param string      $signMsg
      * @param string      $key
      * @param null|string $footer
@@ -69,17 +65,18 @@ class Version2
             throw new PasetoException('Invalid public key length.');
         }
 
+        self::verifyHeader($signMsg);
+
         if (null === $footer) {
             // we do not care about the contents of footer at all, even if it
             // is there...
-            $footer = self::extractFooter($signMsg);
+            $footer = self::getFooter($signMsg);
         } else {
             // we do care about the contents of footer, and it MUST be the
             // same as we request here
             $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
         }
         $signMsg = self::removeFooter($signMsg);
-        self::verifyHeader($signMsg);
         $decoded = Base64UrlSafe::decode(Binary::safeSubstr($signMsg, 10));
         $len = Binary::safeStrlen($decoded);
         // Separate the decoded bundle into the message and signature.
@@ -105,14 +102,8 @@ class Version2
     public static function extractFooter($payload)
     {
         self::verifyHeader($payload);
-        /** @var array<int, string> $pieces */
-        $pieces = \explode('.', $payload);
-        $count = \count($pieces);
-        if ($count < 3 || $count > 4) {
-            throw new PasetoException('Truncated or invalid token.');
-        }
 
-        return $count > 3 ? Base64UrlSafe::decode($pieces[3]) : '';
+        return self::getFooter($payload);
     }
 
     /**
@@ -128,6 +119,23 @@ class Version2
         }
 
         return $payload;
+    }
+
+    /**
+     * @param string $payload
+     *
+     * @return string
+     */
+    private static function getFooter($payload)
+    {
+        /** @var array<int, string> $pieces */
+        $pieces = \explode('.', $payload);
+        $count = \count($pieces);
+        if ($count < 3 || $count > 4) {
+            throw new PasetoException('Truncated or invalid token.');
+        }
+
+        return $count > 3 ? Base64UrlSafe::decode($pieces[3]) : '';
     }
 
     /**
@@ -197,7 +205,7 @@ class Version2
         if ('' === $footer) {
             return $payload;
         }
-        $footer = self::encode($footer);
+        $footer = self::base64EncodeUnpadded($footer);
         $payload_len = Binary::safeStrlen($payload);
         $footer_len = Binary::safeStrlen($footer) + 1;
         $trailing = Binary::safeSubstr(
@@ -230,7 +238,7 @@ class Version2
      *
      * @return string
      */
-    private static function encode($str)
+    private static function base64EncodeUnpadded($str)
     {
         return \rtrim(Base64UrlSafe::encode($str), '=');
     }
