@@ -35,10 +35,7 @@ class Version2
      */
     public static function sign($data, $key, $footer = '')
     {
-        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($key)) {
-            throw new PasetoException('Invalid secret key length.');
-        }
-
+        self::verifySecretKey($key);
         $signature = \sodium_crypto_sign_detached(
             self::preAuthEncode([self::PASETO_HEADER, $data, $footer]),
             $key
@@ -61,12 +58,8 @@ class Version2
      */
     public static function verify($signMsg, $key, $footer = null)
     {
-        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($key)) {
-            throw new PasetoException('Invalid public key length.');
-        }
-
+        self::verifyPublicKey($key);
         self::verifyHeader($signMsg);
-
         if (null === $footer) {
             // we do not care about the contents of footer at all, even if it
             // is there...
@@ -241,5 +234,29 @@ class Version2
     private static function base64EncodeUnpadded($str)
     {
         return \rtrim(Base64UrlSafe::encode($str), '=');
+    }
+
+    /**
+     * @param string $publicKey
+     *
+     * @return void
+     */
+    private static function verifyPublicKey($publicKey)
+    {
+        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
+            throw new PasetoException('Invalid public key length.');
+        }
+    }
+
+    /**
+     * @param string $secretKey
+     *
+     * @return void
+     */
+    private static function verifySecretKey($secretKey)
+    {
+        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
+            throw new PasetoException('Invalid secret key length.');
+        }
     }
 }
