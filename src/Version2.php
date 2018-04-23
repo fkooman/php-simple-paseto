@@ -27,32 +27,32 @@ class Version2
     const PASETO_HEADER = 'v2.public.';
 
     /**
-     * @param string $data
+     * @param string $msgData
      * @param string $secretKey
-     * @param string $footer
+     * @param string $msgFooter
      *
      * @return string
      */
-    public static function sign($data, $secretKey, $footer = '')
+    public static function sign($msgData, $secretKey, $msgFooter = '')
     {
         self::verifySecretKey($secretKey);
-        $signature = \sodium_crypto_sign_detached(
+        $msgSig = \sodium_crypto_sign_detached(
             self::preAuthEncode(
                 [
                     self::PASETO_HEADER,
-                    $data,
-                    $footer,
+                    $msgData,
+                    $msgFooter,
                 ]
             ),
             $secretKey
         );
 
-        $message = self::PASETO_HEADER.self::encodeUnpadded($data.$signature);
-        if ('' === $footer) {
-            return $message;
+        $signMsg = self::PASETO_HEADER.self::encodeUnpadded($msgData.$msgSig);
+        if ('' === $msgFooter) {
+            return $signMsg;
         }
 
-        return $message.'.'.self::encodeUnpadded($footer);
+        return $signMsg.'.'.self::encodeUnpadded($msgFooter);
     }
 
     /**
@@ -74,19 +74,19 @@ class Version2
             throw new PasetoException('Invalid message footer.');
         }
 
-        $len = Binary::safeStrlen($msgPayload);
-        $message = Binary::safeSubstr($msgPayload, 0, $len - SODIUM_CRYPTO_SIGN_BYTES);
-        $signature = Binary::safeSubstr($msgPayload, $len - SODIUM_CRYPTO_SIGN_BYTES);
+        $msgPayloadLen = Binary::safeStrlen($msgPayload);
+        $msgData = Binary::safeSubstr($msgPayload, 0, $msgPayloadLen - SODIUM_CRYPTO_SIGN_BYTES);
+        $msgSig = Binary::safeSubstr($msgPayload, $msgPayloadLen - SODIUM_CRYPTO_SIGN_BYTES);
         $valid = \sodium_crypto_sign_verify_detached(
-            $signature,
-            self::preAuthEncode([self::PASETO_HEADER, $message, $expectedFooter]),
+            $msgSig,
+            self::preAuthEncode([self::PASETO_HEADER, $msgData, $expectedFooter]),
             $publicKey
         );
         if (false === $valid) {
             throw new PasetoException('Invalid signature.');
         }
 
-        return $message;
+        return $msgData;
     }
 
     /**
