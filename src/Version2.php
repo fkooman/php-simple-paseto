@@ -41,12 +41,12 @@ class Version2
             $secretKey
         );
 
-        $message = self::PASETO_HEADER.self::base64EncodeUnpadded($data.$signature);
+        $message = self::PASETO_HEADER.self::encodeUnpadded($data.$signature);
         if ('' === $footer) {
             return $message;
         }
 
-        return $message.'.'.self::base64EncodeUnpadded($footer);
+        return $message.'.'.self::encodeUnpadded($footer);
     }
 
     /**
@@ -198,7 +198,7 @@ class Version2
         if ('' === $footer) {
             return $payload;
         }
-        $footer = self::base64EncodeUnpadded($footer);
+        $footer = self::encodeUnpadded($footer);
         $payload_len = Binary::safeStrlen($payload);
         $footer_len = Binary::safeStrlen($footer) + 1;
         $trailing = Binary::safeSubstr(
@@ -231,7 +231,7 @@ class Version2
      *
      * @return string
      */
-    private static function base64EncodeUnpadded($str)
+    private static function encodeUnpadded($str)
     {
         return \rtrim(Base64UrlSafe::encode($str), '=');
     }
