@@ -31,6 +31,9 @@ class Version2
      * @param string $secretKey
      * @param string $msgFooter
      *
+     * @throws PasetoException
+     * @throws \LengthException
+     *
      * @return string
      */
     public static function sign($msgData, $secretKey, $msgFooter = '')
@@ -59,6 +62,10 @@ class Version2
      * @param string      $signMsg
      * @param string      $publicKey
      * @param null|string $expectedFooter
+     *
+     * @throws PasetoException
+     * @throws \RangeException
+     * @throws \LengthException
      *
      * @return string
      */
@@ -92,6 +99,9 @@ class Version2
     /**
      * @param string $signMsg
      *
+     * @throws PasetoException
+     * @throws \RangeException
+     *
      * @return string
      */
     public static function extractFooter($signMsg)
@@ -101,6 +111,9 @@ class Version2
 
     /**
      * @param string $signMsg
+     *
+     * @throws PasetoException
+     * @throws \RangeException
      *
      * @return array<int, string>
      */
@@ -186,24 +199,28 @@ class Version2
     /**
      * @param string $publicKey
      *
+     * @throws \LengthException
+     *
      * @return void
      */
     private static function verifyPublicKey($publicKey)
     {
         if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
-            throw new PasetoException('Invalid public key length.');
+            throw new \LengthException('Invalid public key length.');
         }
     }
 
     /**
      * @param string $secretKey
      *
+     * @throws \LengthException
+     *
      * @return void
      */
     private static function verifySecretKey($secretKey)
     {
         if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
-            throw new PasetoException('Invalid secret key length.');
+            throw new \LengthException('Invalid secret key length.');
         }
     }
 }

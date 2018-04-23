@@ -18,8 +18,6 @@
 
 namespace fkooman\Paseto\Exception;
 
-use Exception;
-
-class PasetoException extends Exception
+class PasetoException extends \Exception
 {
 }
