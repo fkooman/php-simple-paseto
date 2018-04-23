@@ -37,7 +37,13 @@ class Version2
     {
         self::verifySecretKey($secretKey);
         $signature = \sodium_crypto_sign_detached(
-            self::preAuthEncode([self::PASETO_HEADER, $data, $footer]),
+            self::preAuthEncode(
+                [
+                    self::PASETO_HEADER,
+                    $data,
+                    $footer,
+                ]
+            ),
             $secretKey
         );
 
@@ -52,32 +58,28 @@ class Version2
     /**
      * @param string      $signMsg
      * @param string      $publicKey
-     * @param null|string $footer
+     * @param null|string $expectedFooter
      *
      * @return string
      */
-    public static function verify($signMsg, $publicKey, $footer = null)
+    public static function verify($signMsg, $publicKey, $expectedFooter = null)
     {
         self::verifyPublicKey($publicKey);
-        self::verifyHeader($signMsg);
-        if (null === $footer) {
-            // we do not care about the contents of footer at all, even if it
-            // is there...
-            $footer = self::getFooter($signMsg);
-        } else {
-            // we do care about the contents of footer, and it MUST be the
-            // same as we request here
-            $signMsg = self::validateAndRemoveFooter($signMsg, $footer);
+        list($msgPayload, $msgFooter) = self::parseMessage($signMsg);
+        if (null === $expectedFooter) {
+            $expectedFooter = $msgFooter;
         }
-        $signMsg = self::removeFooter($signMsg);
-        $decoded = Base64UrlSafe::decode(Binary::safeSubstr($signMsg, 10));
-        $len = Binary::safeStrlen($decoded);
-        // Separate the decoded bundle into the message and signature.
-        $message = Binary::safeSubstr($decoded, 0, $len - SODIUM_CRYPTO_SIGN_BYTES);
-        $signature = Binary::safeSubstr($decoded, $len - SODIUM_CRYPTO_SIGN_BYTES);
+
+        if (!\hash_equals($expectedFooter, $msgFooter)) {
+            throw new PasetoException('Invalid message footer.');
+        }
+
+        $len = Binary::safeStrlen($msgPayload);
+        $message = Binary::safeSubstr($msgPayload, 0, $len - SODIUM_CRYPTO_SIGN_BYTES);
+        $signature = Binary::safeSubstr($msgPayload, $len - SODIUM_CRYPTO_SIGN_BYTES);
         $valid = \sodium_crypto_sign_verify_detached(
             $signature,
-            self::preAuthEncode([self::PASETO_HEADER, $message, $footer]),
+            self::preAuthEncode([self::PASETO_HEADER, $message, $expectedFooter]),
             $publicKey
         );
         if (false === $valid) {
@@ -88,47 +90,35 @@ class Version2
     }
 
     /**
-     * @param string $payload
+     * @param string $signMsg
      *
      * @return string
      */
-    public static function extractFooter($payload)
+    public static function extractFooter($signMsg)
     {
-        self::verifyHeader($payload);
-
-        return self::getFooter($payload);
+        return self::parseMessage($signMsg)[1];
     }
 
     /**
-     * @param string $payload
+     * @param string $signMsg
      *
-     * @return string
+     * @return array<int, string>
      */
-    public static function removeFooter($payload)
+    private static function parseMessage($signMsg)
     {
-        $pieces = \explode('.', $payload);
-        if (\count($pieces) > 3) {
-            return \implode('.', \array_slice($pieces, 0, 3));
+        if (!\hash_equals(self::PASETO_HEADER, Binary::safeSubstr($signMsg, 0, 10))) {
+            throw new PasetoException('Invalid message header.');
         }
-
-        return $payload;
-    }
-
-    /**
-     * @param string $payload
-     *
-     * @return string
-     */
-    private static function getFooter($payload)
-    {
-        /** @var array<int, string> $pieces */
-        $pieces = \explode('.', $payload);
+        $pieces = \explode('.', $signMsg);
         $count = \count($pieces);
-        if ($count < 3 || $count > 4) {
-            throw new PasetoException('Truncated or invalid token.');
+        switch ($count) {
+            case 3:
+                return [Base64UrlSafe::decode($pieces[2]), ''];
+            case 4:
+                return [Base64UrlSafe::decode($pieces[2]), Base64UrlSafe::decode($pieces[3])];
+            default:
+                throw new PasetoException('Truncated or invalid token.');
         }
-
-        return $count > 3 ? Base64UrlSafe::decode($pieces[3]) : '';
     }
 
     /**
@@ -181,49 +171,6 @@ class Version2
         }
 
         return $str;
-    }
-
-    /**
-     * If a footer was included with the message, first verify that
-     * it's equivalent to the one we expect, then remove it from the
-     * token payload.
-     *
-     * @param string $payload
-     * @param string $footer
-     *
-     * @return string
-     */
-    private static function validateAndRemoveFooter($payload, $footer = '')
-    {
-        if ('' === $footer) {
-            return $payload;
-        }
-        $footer = self::encodeUnpadded($footer);
-        $payload_len = Binary::safeStrlen($payload);
-        $footer_len = Binary::safeStrlen($footer) + 1;
-        $trailing = Binary::safeSubstr(
-            $payload,
-            $payload_len - $footer_len,
-            $footer_len
-        );
-        if (!\hash_equals('.'.$footer, $trailing)) {
-            throw new PasetoException('Invalid message footer.');
-        }
-
-        return Binary::safeSubstr($payload, 0, $payload_len - $footer_len);
-    }
-
-    /**
-     * @param string $signMsg
-     *
-     * @return void
-     */
-    private static function verifyHeader($signMsg)
-    {
-        $givenHeader = Binary::safeSubstr($signMsg, 0, 10);
-        if (!\hash_equals(self::PASETO_HEADER, $givenHeader)) {
-            throw new PasetoException('Invalid message header.');
-        }
     }
 
     /**
