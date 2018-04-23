@@ -30,19 +30,10 @@ use PHPUnit\Framework\TestCase;
 class Version2VectorTest extends TestCase
 {
     /** @var string */
-    protected $fullKey;
-
-    /** @var string */
-    protected $nullKey;
-
-    /** @var string */
     protected $privateKey;
 
     /** @var string */
     protected $publicKey;
-
-    /** @var string */
-    protected $symmetricKey;
 
     /**
      * This just sets up two asymmetric keys, generated once
@@ -53,13 +44,6 @@ class Version2VectorTest extends TestCase
      */
     public function setUp()
     {
-        $this->symmetricKey = Hex::decode(
-            '707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f'
-        );
-
-        $this->nullKey = \str_repeat("\0", 32);
-        $this->fullKey = \str_repeat("\xff", 32);
-
         $this->privateKey = Hex::decode(
             'b4cbfb43df4ce210727d953e4a713307fa19bb7d9f85041438d9e11b942a3774'.
             '1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2'
