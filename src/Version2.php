@@ -31,7 +31,6 @@ class Version2
      * @param string $secretKey
      * @param string $msgFooter
      *
-     * @throws PasetoException
      * @throws \LengthException
      *
      * @return string
