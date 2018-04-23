@@ -28,17 +28,17 @@ class Version2
 
     /**
      * @param string $data
-     * @param string $key
+     * @param string $secretKey
      * @param string $footer
      *
      * @return string
      */
-    public static function sign($data, $key, $footer = '')
+    public static function sign($data, $secretKey, $footer = '')
     {
-        self::verifySecretKey($key);
+        self::verifySecretKey($secretKey);
         $signature = \sodium_crypto_sign_detached(
             self::preAuthEncode([self::PASETO_HEADER, $data, $footer]),
-            $key
+            $secretKey
         );
 
         $message = self::PASETO_HEADER.self::base64EncodeUnpadded($data.$signature);
@@ -51,14 +51,14 @@ class Version2
 
     /**
      * @param string      $signMsg
-     * @param string      $key
+     * @param string      $publicKey
      * @param null|string $footer
      *
      * @return string
      */
-    public static function verify($signMsg, $key, $footer = null)
+    public static function verify($signMsg, $publicKey, $footer = null)
     {
-        self::verifyPublicKey($key);
+        self::verifyPublicKey($publicKey);
         self::verifyHeader($signMsg);
         if (null === $footer) {
             // we do not care about the contents of footer at all, even if it
@@ -78,7 +78,7 @@ class Version2
         $valid = \sodium_crypto_sign_verify_detached(
             $signature,
             self::preAuthEncode([self::PASETO_HEADER, $message, $footer]),
-            $key
+            $publicKey
         );
         if (false === $valid) {
             throw new PasetoException('Invalid signature.');
