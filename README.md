@@ -25,6 +25,24 @@ PHP >= 7. So I decided to make a tiny implementation that just supports
 `v2.public` for my 
 [OAuth Server](https://github.com/fkooman/php-oauth2-server).
 
+# How 
+
+The API of `Version2` is the same as in 
+[paragonie/paseto](https://github.com/paragonie/paseto).
+
+## Example 
+
+    <?php
+    require_once 'vendor/autoload.php';
+
+    $keyPair = sodium_crypto_sign_keypair();
+    $secretKey = sodium_crypto_sign_secretkey($keyPair);
+    $publicKey = sodium_crypto_sign_publickey($keyPair);
+
+    $signMsg = \fkooman\Paseto\Version2::sign('hello', $secretKey);
+    // 'hello'
+    echo \fkooman\Paseto\Version2::verify($signMsg, $publicKey) . PHP_EOL;
+
 # License 
 
 ISC, same as [paragonie/paseto](https://github.com/paragonie/paseto). I 

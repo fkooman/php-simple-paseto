@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 0.1.5 (...)
+- remove some dead code in tests
+- update DocBlock exception documentation
+- add usage to README.md
+
 ## 0.1.4 (2018-04-23)
 - simplify cleanup
 
