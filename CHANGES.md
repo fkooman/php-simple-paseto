@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.1.6 (2018-05-01)
+- support `paragonie/constant_time_encoding` with and without encodeUnpadded
+
 ## 0.1.5 (2018-04-24)
 - remove some dead code in tests
 - update DocBlock exception documentation
