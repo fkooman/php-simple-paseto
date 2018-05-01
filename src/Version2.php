@@ -186,16 +186,6 @@ class Version2
     }
 
     /**
-     * @param string $str
-     *
-     * @return string
-     */
-    private static function encodeUnpadded($str)
-    {
-        return \rtrim(Base64UrlSafe::encode($str), '=');
-    }
-
-    /**
      * @param string $publicKey
      *
      * @throws \LengthException
@@ -221,5 +211,21 @@ class Version2
         if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
             throw new \LengthException('Invalid secret key length.');
         }
+    }
+
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    private static function encodeUnpadded($str)
+    {
+        // check if Base64UrlSafe::encodeUnpadded exists, only on
+        // paragonie/constant_time_encoding >= 1.0.3, >= 2.2.0
+        if (\method_exists('ParagonIE\ConstantTime\Base64UrlSafe', 'encodeUnpadded')) {
+            return Base64UrlSafe::encodeUnpadded($str);
+        }
+
+        return \rtrim(Base64UrlSafe::encode($str), '=');
     }
 }
