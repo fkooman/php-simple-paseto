@@ -46,3 +46,12 @@ The API of `Version2` is the same as in
 
 ISC, same as [paragonie/paseto](https://github.com/paragonie/paseto). I 
 copy/pasted some code snippets/docblocks from this library and used them here.
+
+# Contact
+
+You can contact me with any questions or issues regarding this project. Drop
+me a line at [fkooman@tuxed.net](mailto:fkooman@tuxed.net).
+
+If you want to (responsibly) disclose a security issue you can also use the 
+PGP key with key ID `9C5EDD645A571EB2` and fingerprint 
+`6237 BAF1 418A 907D AA98  EAA7 9C5E DD64 5A57 1EB2`.
