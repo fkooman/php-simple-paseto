@@ -2,10 +2,14 @@
 <psalm
     totallyTyped="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="/home/fkooman/.config/composer/vendor/vimeo/psalm/src/config.xsd"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config file:///home/fkooman/.config/composer/vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
         <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
     </projectFiles>
 
     <issueHandlers>

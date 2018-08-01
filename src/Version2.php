@@ -166,7 +166,7 @@ class Version2
      */
     private static function LE64($n)
     {
-        if (PHP_VERSION_ID >= 50603) {
+        if (\PHP_VERSION_ID >= 50603) {
             return \pack('P', $n);
         }
 

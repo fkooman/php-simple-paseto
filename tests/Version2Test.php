@@ -31,9 +31,9 @@ class Version2Test extends TestCase
      */
     public function testSign()
     {
-        $keypair = sodium_crypto_sign_keypair();
-        $privateKey = sodium_crypto_sign_secretkey($keypair);
-        $publicKey = sodium_crypto_sign_publickey($keypair);
+        $keypair = \sodium_crypto_sign_keypair();
+        $privateKey = \sodium_crypto_sign_secretkey($keypair);
+        $publicKey = \sodium_crypto_sign_publickey($keypair);
 
         $year = (int) (\date('Y')) + 1;
         $messages = [
