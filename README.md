@@ -22,7 +22,7 @@ I really like the idea of PASETO! I need to support PHP >= 5.4, so I can't use
 [paragonie/paseto](https://github.com/paragonie/paseto) as it requires 
 PHP >= 7. So I decided to make a tiny implementation that just supports 
 `v2.public` for my 
-[OAuth Server](https://github.com/fkooman/php-oauth2-server).
+[OAuth Server](https://git.tuxed.net/fkooman/php-oauth2-server).
 
 # How 
 
