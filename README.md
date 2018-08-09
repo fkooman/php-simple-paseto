@@ -4,6 +4,8 @@ This is a very simple
 [PASETO](https://paseto.io/rfc/) implementation written for PHP >= 5.4. It 
 **ONLY** supports `v2.public` and nothing else.
 
+**NOTE** only 64 bit PHP installations are supported!
+
 **NOTE** if you are looking for a proper supported implementation of PASETO, 
 please use [paragonie/paseto](https://github.com/paragonie/paseto).
 
