@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 0.1.7 (...)
+## 0.1.7 (2018-08-09)
 - make sure we only support 64 bit PHP >= 5.4, we don't care about 32 bit 
   anymore
 - cleanup `Version2::intToByteArray`
