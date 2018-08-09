@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 0.1.7 (...)
+- make sure we only support 64 bit PHP >= 5.4, we don't care about 32 bit 
+  anymore
+- cleanup `Version2::intToByteArray`
+- update README
+- update `psalm.xml` file
+
 ## 0.1.6 (2018-05-01)
 - support `paragonie/constant_time_encoding` with and without encodeUnpadded
 
