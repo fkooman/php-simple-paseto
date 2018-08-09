@@ -21,6 +21,7 @@ namespace fkooman\Paseto;
 use fkooman\Paseto\Exception\PasetoException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\ConstantTime\Binary;
+use RuntimeException;
 
 class Version2
 {
@@ -149,10 +150,10 @@ class Version2
      */
     private static function preAuthEncode(array $pieces)
     {
-        $accumulator = self::LE64((int) (\count($pieces) & PHP_INT_MAX));
+        $accumulator = self::intToByteArray((int) (\count($pieces) & PHP_INT_MAX));
         foreach ($pieces as $piece) {
             $len = Binary::safeStrlen($piece);
-            $accumulator .= self::LE64((int) ($len & PHP_INT_MAX));
+            $accumulator .= self::intToByteArray((int) ($len & PHP_INT_MAX));
             $accumulator .= $piece;
         }
 
@@ -160,29 +161,30 @@ class Version2
     }
 
     /**
-     * @param int $n
+     * @see paragonie/sodium_compat
+     *
+     * @param int $int
      *
      * @return string
      */
-    private static function LE64($n)
+    private static function intToByteArray($int)
     {
+        if (8 !== PHP_INT_SIZE) {
+            throw new RuntimeException('only 64 bit PHP installations are supported');
+        }
+
         if (\PHP_VERSION_ID >= 50603) {
-            return \pack('P', $n);
+            return \pack('P', $int);
         }
 
-        // compat mode, for PHP < 5.6.3, taken from PASETO RFC pseudocode
-        // pack('P') above is ~7 times faster than this implementation below
-        // (tested on PHP 7.1.16)
-        $str = '';
-        for ($i = 0; $i < 8; ++$i) {
-            if (7 === $i) {
-                $n &= 127;
-            }
-            $str .= \pack('C', $n & 255);
-            $n = (int) ($n >> 8);
-        }
-
-        return $str;
+        return \pack('C', $int & 0xff).
+            \pack('C', ($int >> 8) & 0xff).
+            \pack('C', ($int >> 16) & 0xff).
+            \pack('C', ($int >> 24) & 0xff).
+            \pack('C', ($int >> 32) & 0xff).
+            \pack('C', ($int >> 40) & 0xff).
+            \pack('C', ($int >> 48) & 0xff).
+            \pack('C', ($int >> 56) & 0xff);
     }
 
     /**
