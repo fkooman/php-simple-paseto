@@ -1,13 +1,10 @@
 # Introduction
 
-This is a very simple 
-[PASETO](https://paseto.io/rfc/) implementation written for PHP >= 5.4. It 
-**ONLY** supports `v2.public` and nothing else.
+This is a very simple [PASETO](https://paseto.io/rfc/) implementation written
+in PHP.
 
-**NOTE** only 64 bit PHP installations are supported!
-
-**NOTE** if you are looking for a proper supported implementation of PASETO, 
-please use [paragonie/paseto](https://github.com/paragonie/paseto).
+**NOTE**: if you are looking for the reference implementation of PASETO, please 
+use [paragonie/paseto](https://github.com/paragonie/paseto).
 
 # What?
 
@@ -17,6 +14,15 @@ addition it has a `Version2::extractFooter` method for extracting the footer
 to select the correct public key for verifying the signature.
 
 It uses the official test vectors to make sure everything works as expected.
+
+# Requirements
+
+- PHP >= 5.4 with PECL [libsodium](https://pecl.php.net/package/libsodium);
+- PHP >= 7.2 with built in [sodium](https://secure.php.net/sodium);
+- 64 bit PHP;
+
+We explicitly support CentOS / Red Hat Enterprise >= 7 with 
+`php-pecl-libsodium` from [EPEL](https://fedoraproject.org/wiki/EPEL).
 
 # Why?
 
@@ -33,6 +39,7 @@ The API of `Version2` is the same as in
 
 ## Example 
 
+```php
     <?php
     require_once 'vendor/autoload.php';
 
@@ -43,6 +50,7 @@ The API of `Version2` is the same as in
     $signMsg = \fkooman\Paseto\Version2::sign('hello', $secretKey);
     // 'hello'
     echo \fkooman\Paseto\Version2::verify($signMsg, $publicKey) . PHP_EOL;
+```
 
 # Contact
 
