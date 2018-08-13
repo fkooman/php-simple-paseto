@@ -17,8 +17,9 @@ It uses the official test vectors to make sure everything works as expected.
 
 # Requirements
 
-- PHP >= 5.4 with PECL [libsodium](https://pecl.php.net/package/libsodium);
-- PHP >= 7.2 with built in [sodium](https://secure.php.net/sodium);
+- Either PHP >= 5.4 with PECL 
+  [libsodium](https://pecl.php.net/package/libsodium), or PHP >= 7.2 with 
+  built-in [sodium](https://secure.php.net/sodium);
 - 64 bit PHP;
 
 We explicitly support CentOS / Red Hat Enterprise >= 7 with 
