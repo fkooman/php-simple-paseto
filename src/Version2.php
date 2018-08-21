@@ -222,12 +222,13 @@ class Version2
      */
     private static function encodeUnpadded($str)
     {
-        // check if Base64UrlSafe::encodeUnpadded exists, only on
-        // paragonie/constant_time_encoding >= 1.0.3, >= 2.2.0
-        if (\method_exists('ParagonIE\ConstantTime\Base64UrlSafe', 'encodeUnpadded')) {
-            return Base64UrlSafe::encodeUnpadded($str);
-        }
-
+        // For encodeUnpadded we need paragonie/constant_time_encoding
+        // >= 1.0.3, >= 2.2.0
+        // Ubuntu 18.04: php-constant-time (2.2.0-1) [universe]
+        // Fedora 28: php-paragonie-constant-time-encoding-2.2.2-4.fc28
+        // Debian 9: php-constant-time (2.0.3-1)
+        // CentOS: php-paragonie-constant-time-encoding-1.0.3-1.el7
+        // return Base64UrlSafe::encodeUnpadded($str);
         return \rtrim(Base64UrlSafe::encode($str), '=');
     }
 }
