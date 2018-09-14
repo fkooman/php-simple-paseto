@@ -40,7 +40,7 @@
     },
     "support": {
         "email": "fkooman@tuxed.net",
-        "source": "https://git.tuxed.net/fkooman/php-yubitwee"
+        "source": "https://git.tuxed.net/fkooman/php-simple-paseto"
     },
     "type": "library"
 }
