@@ -227,7 +227,7 @@ class Version2
         // Ubuntu 18.04: php-constant-time (2.2.0-1) [universe]
         // Fedora 28: php-paragonie-constant-time-encoding-2.2.2-4.fc28
         // Debian 9: php-constant-time (2.0.3-1)
-        // CentOS: php-paragonie-constant-time-encoding-1.0.3-1.el7
+        // CentOS: php-paragonie-constant-time-encoding-1.0.4-2.el7
         // return Base64UrlSafe::encodeUnpadded($str);
         return \rtrim(Base64UrlSafe::encode($str), '=');
     }
