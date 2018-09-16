@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.0 (...)
+- introduce `KeyPair`, `SecretKey` and `PublicKey` objects
+
 ## 0.1.7 (2018-08-09)
 - make sure we only support 64 bit PHP >= 5.4, we don't care about 32 bit 
   anymore

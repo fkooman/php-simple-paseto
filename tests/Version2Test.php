@@ -19,6 +19,7 @@
 namespace fkooman\Paseto\Tests;
 
 use fkooman\Paseto\Exception\PasetoException;
+use fkooman\Paseto\KeyPair;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Binary;
 use PHPUnit\Framework\TestCase;
@@ -31,9 +32,9 @@ class Version2Test extends TestCase
      */
     public function testSign()
     {
-        $keypair = \sodium_crypto_sign_keypair();
-        $privateKey = \sodium_crypto_sign_secretkey($keypair);
-        $publicKey = \sodium_crypto_sign_publickey($keypair);
+        $keyPair = KeyPair::generate();
+        $secretKey = $keyPair->getSecretKey();
+        $publicKey = $keyPair->getPublicKey();
 
         $year = (int) (\date('Y')) + 1;
         $messages = [
@@ -42,7 +43,7 @@ class Version2Test extends TestCase
         ];
 
         foreach ($messages as $message) {
-            $signed = Version2::sign($message, $privateKey);
+            $signed = Version2::sign($message, $secretKey);
             $this->assertInternalType('string', $signed);
             $this->assertSame('v2.public.', Binary::safeSubstr($signed, 0, 10));
 
@@ -51,7 +52,7 @@ class Version2Test extends TestCase
             $this->assertSame($message, $decode);
 
             // Now with a footer
-            $signed = Version2::sign($message, $privateKey, 'footer');
+            $signed = Version2::sign($message, $secretKey, 'footer');
             $this->assertInternalType('string', $signed);
             $this->assertSame('v2.public.', Binary::safeSubstr($signed, 0, 10));
             try {

@@ -18,6 +18,8 @@
 
 namespace fkooman\Paseto\Tests;
 
+use fkooman\Paseto\PublicKey;
+use fkooman\Paseto\SecretKey;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Hex;
 use PHPUnit\Framework\TestCase;
@@ -29,10 +31,10 @@ use PHPUnit\Framework\TestCase;
  */
 class Version2VectorTest extends TestCase
 {
-    /** @var string */
+    /** @var \fkooman\Paseto\SecretKey */
     protected $privateKey;
 
-    /** @var string */
+    /** @var \fkooman\Paseto\PublicKey */
     protected $publicKey;
 
     /**
@@ -44,14 +46,14 @@ class Version2VectorTest extends TestCase
      */
     public function setUp()
     {
-        $this->privateKey = Hex::decode(
+        $this->privateKey = new SecretKey(Hex::decode(
             'b4cbfb43df4ce210727d953e4a713307fa19bb7d9f85041438d9e11b942a3774'.
             '1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2'
-        );
+        ));
 
-        $this->publicKey = Hex::decode(
+        $this->publicKey = new PublicKey(Hex::decode(
             '1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2'
-        );
+        ));
     }
 
     /**

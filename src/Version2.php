@@ -28,17 +28,16 @@ class Version2
     const PASETO_HEADER = 'v2.public.';
 
     /**
-     * @param string $msgData
-     * @param string $secretKey
-     * @param string $msgFooter
+     * @param string    $msgData
+     * @param SecretKey $secretKey
+     * @param string    $msgFooter
      *
      * @throws \LengthException
      *
      * @return string
      */
-    public static function sign($msgData, $secretKey, $msgFooter = '')
+    public static function sign($msgData, SecretKey $secretKey, $msgFooter = '')
     {
-        self::verifySecretKey($secretKey);
         $msgSig = \sodium_crypto_sign_detached(
             self::preAuthEncode(
                 [
@@ -47,7 +46,7 @@ class Version2
                     $msgFooter,
                 ]
             ),
-            $secretKey
+            $secretKey->getKey()
         );
 
         $signMsg = self::PASETO_HEADER.self::encodeUnpadded($msgData.$msgSig);
@@ -60,7 +59,7 @@ class Version2
 
     /**
      * @param string      $signMsg
-     * @param string      $publicKey
+     * @param PublicKey   $publicKey
      * @param null|string $expectedFooter
      *
      * @throws PasetoException
@@ -69,9 +68,8 @@ class Version2
      *
      * @return string
      */
-    public static function verify($signMsg, $publicKey, $expectedFooter = null)
+    public static function verify($signMsg, PublicKey $publicKey, $expectedFooter = null)
     {
-        self::verifyPublicKey($publicKey);
         list($msgPayload, $msgFooter) = self::parseMessage($signMsg);
         if (null === $expectedFooter) {
             $expectedFooter = $msgFooter;
@@ -87,7 +85,7 @@ class Version2
         $valid = \sodium_crypto_sign_verify_detached(
             $msgSig,
             self::preAuthEncode([self::PASETO_HEADER, $msgData, $expectedFooter]),
-            $publicKey
+            $publicKey->getKey()
         );
         if (false === $valid) {
             throw new PasetoException('Invalid signature.');
@@ -185,34 +183,6 @@ class Version2
             \pack('C', ($int >> 40) & 0xff).
             \pack('C', ($int >> 48) & 0xff).
             \pack('C', ($int >> 56) & 0xff);
-    }
-
-    /**
-     * @param string $publicKey
-     *
-     * @throws \LengthException
-     *
-     * @return void
-     */
-    private static function verifyPublicKey($publicKey)
-    {
-        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
-            throw new \LengthException('Invalid public key length.');
-        }
-    }
-
-    /**
-     * @param string $secretKey
-     *
-     * @throws \LengthException
-     *
-     * @return void
-     */
-    private static function verifySecretKey($secretKey)
-    {
-        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
-            throw new \LengthException('Invalid secret key length.');
-        }
     }
 
     /**

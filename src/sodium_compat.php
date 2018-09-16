@@ -24,6 +24,10 @@ if (!\defined('SODIUM_CRYPTO_SIGN_BYTES')) {
     \define('SODIUM_CRYPTO_SIGN_BYTES', \Sodium\CRYPTO_SIGN_BYTES);
 }
 
+if (!\defined('SODIUM_CRYPTO_SIGN_KEYPAIRBYTES')) {
+    \define('SODIUM_CRYPTO_SIGN_KEYPAIRBYTES', \Sodium\CRYPTO_SIGN_KEYPAIRBYTES);
+}
+
 if (!\is_callable('sodium_crypto_sign_publickey')) {
     /**
      * @param string $keypair

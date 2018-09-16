@@ -44,9 +44,9 @@ The API of `Version2` is the same as in
     <?php
     require_once 'vendor/autoload.php';
 
-    $keyPair = sodium_crypto_sign_keypair();
-    $secretKey = sodium_crypto_sign_secretkey($keyPair);
-    $publicKey = sodium_crypto_sign_publickey($keyPair);
+    $keyPair = KeyPair::generate();
+    $secretKey = $keyPair->getSecretKey();
+    $publicKey = $keyPair->getPublicKey();
 
     $signMsg = \fkooman\Paseto\Version2::sign('hello', $secretKey);
     // 'hello'
