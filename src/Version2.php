@@ -22,22 +22,30 @@ use fkooman\Paseto\Exception\PasetoException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\ConstantTime\Binary;
 use RuntimeException;
+use TypeError;
 
 class Version2
 {
     const PASETO_HEADER = 'v2.public.';
 
     /**
-     * @param string    $msgData
-     * @param SecretKey $secretKey
-     * @param string    $msgFooter
+     * @param string              $msgData
+     * @param AsymmetricSecretKey $secretKey
+     * @param string              $msgFooter
      *
      * @throws \LengthException
      *
      * @return string
      */
-    public static function sign($msgData, SecretKey $secretKey, $msgFooter = '')
+    public static function sign($msgData, AsymmetricSecretKey $secretKey, $msgFooter = '')
     {
+        if (!\is_string($msgData)) {
+            throw new TypeError('argument 1 must be string');
+        }
+        if (!\is_string($msgFooter)) {
+            throw new TypeError('argument 3 must be string');
+        }
+
         $msgSig = \sodium_crypto_sign_detached(
             self::preAuthEncode(
                 [
@@ -58,9 +66,9 @@ class Version2
     }
 
     /**
-     * @param string      $signMsg
-     * @param PublicKey   $publicKey
-     * @param null|string $expectedFooter
+     * @param string              $signMsg
+     * @param AsymmetricPublicKey $publicKey
+     * @param null|string         $expectedFooter
      *
      * @throws PasetoException
      * @throws \RangeException
@@ -68,8 +76,15 @@ class Version2
      *
      * @return string
      */
-    public static function verify($signMsg, PublicKey $publicKey, $expectedFooter = null)
+    public static function verify($signMsg, AsymmetricPublicKey $publicKey, $expectedFooter = null)
     {
+        if (!\is_string($signMsg)) {
+            throw new TypeError('argument 1 must be string');
+        }
+        if (null !== $expectedFooter && !\is_string($expectedFooter)) {
+            throw new TypeError('argument 3 must be string');
+        }
+
         list($msgPayload, $msgFooter) = self::parseMessage($signMsg);
         if (null === $expectedFooter) {
             $expectedFooter = $msgFooter;
@@ -104,6 +119,10 @@ class Version2
      */
     public static function extractFooter($signMsg)
     {
+        if (!\is_string($signMsg)) {
+            throw new TypeError('argument 1 must be string');
+        }
+
         return self::parseMessage($signMsg)[1];
     }
 

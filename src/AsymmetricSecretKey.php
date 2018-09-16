@@ -19,21 +19,25 @@
 namespace fkooman\Paseto;
 
 use ParagonIE\ConstantTime\Binary;
+use TypeError;
 
-class PublicKey
+class AsymmetricSecretKey
 {
     /** @var string */
-    private $publicKey;
+    private $secretKey;
 
     /**
-     * @param string $publicKey
+     * @param string $secretKey
      */
-    public function __construct($publicKey)
+    public function __construct($secretKey)
     {
-        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
-            throw new \LengthException('Invalid public key length.');
+        if (!\is_string($secretKey)) {
+            throw new TypeError('argument 1 must be string');
         }
-        $this->publicKey = $publicKey;
+        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
+            throw new \LengthException('Invalid secret key length.');
+        }
+        $this->secretKey = $secretKey;
     }
 
     /**
@@ -41,6 +45,6 @@ class PublicKey
      */
     public function getKey()
     {
-        return $this->publicKey;
+        return $this->secretKey;
     }
 }

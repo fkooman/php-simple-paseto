@@ -15,7 +15,8 @@
     },
     "autoload-dev": {
         "files": [
-            "src/sodium_compat.php"
+            "src/sodium_compat.php",
+            "src/error_polyfill.php"
         ],
         "psr-4": {
             "fkooman\\Paseto\\": "src/",

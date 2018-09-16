@@ -18,7 +18,9 @@
 
 namespace fkooman\Paseto;
 
+use LengthException;
 use ParagonIE\ConstantTime\Binary;
+use TypeError;
 
 class KeyPair
 {
@@ -30,8 +32,11 @@ class KeyPair
      */
     public function __construct($keyPair)
     {
+        if (!\is_string($keyPair)) {
+            throw new TypeError('argument 1 must be string');
+        }
         if (SODIUM_CRYPTO_SIGN_KEYPAIRBYTES !== Binary::safeStrlen($keyPair)) {
-            throw new \LengthException('Invalid keypair length.');
+            throw new LengthException('Invalid keypair length.');
         }
         $this->keyPair = $keyPair;
     }
@@ -45,18 +50,18 @@ class KeyPair
     }
 
     /**
-     * @return PublicKey
+     * @return AsymmetricPublicKey
      */
     public function getPublicKey()
     {
-        return new PublicKey(\sodium_crypto_sign_publickey($this->keyPair));
+        return new AsymmetricPublicKey(\sodium_crypto_sign_publickey($this->keyPair));
     }
 
     /**
-     * @return SecretKey
+     * @return AsymmetricSecretKey
      */
     public function getSecretKey()
     {
-        return new SecretKey(\sodium_crypto_sign_secretkey($this->keyPair));
+        return new AsymmetricSecretKey(\sodium_crypto_sign_secretkey($this->keyPair));
     }
 }
