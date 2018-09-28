@@ -15,8 +15,7 @@
     },
     "autoload-dev": {
         "files": [
-            "src/sodium_compat.php",
-            "src/error_polyfill.php"
+            "src/sodium_compat.php"
         ],
         "psr-4": {
             "fkooman\\Paseto\\": "src/",
@@ -30,7 +29,8 @@
         "ext-hash": "*",
         "paragonie/constant_time_encoding": "^1.0.3|^2.2.0",
         "php": ">=5.4",
-        "symfony/polyfill-php56": "^1"
+        "symfony/polyfill-php56": "^1",
+        "symfony/polyfill-php70": "^1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4|^5|^6|^7"
