@@ -28,6 +28,7 @@ class AsymmetricPublicKey
 
     /**
      * @param string $publicKey
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public function __construct($publicKey)
     {

@@ -29,6 +29,7 @@ class KeyPair
 
     /**
      * @param string $keyPair
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public function __construct($keyPair)
     {

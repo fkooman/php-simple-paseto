@@ -36,6 +36,7 @@ class Version2
      * @throws \LengthException
      *
      * @return string
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public static function sign($msgData, AsymmetricSecretKey $secretKey, $msgFooter = '')
     {
@@ -57,12 +58,12 @@ class Version2
             $secretKey->getKey()
         );
 
-        $signMsg = self::PASETO_HEADER.self::encodeUnpadded($msgData.$msgSig);
+        $signMsg = self::PASETO_HEADER.Base64UrlSafe::encodeUnpadded($msgData.$msgSig);
         if ('' === $msgFooter) {
             return $signMsg;
         }
 
-        return $signMsg.'.'.self::encodeUnpadded($msgFooter);
+        return $signMsg.'.'.Base64UrlSafe::encodeUnpadded($msgFooter);
     }
 
     /**
@@ -75,6 +76,7 @@ class Version2
      * @throws \LengthException
      *
      * @return string
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public static function verify($signMsg, AsymmetricPublicKey $publicKey, $expectedFooter = null)
     {
@@ -82,7 +84,7 @@ class Version2
             throw new TypeError('argument 1 must be string');
         }
         if (null !== $expectedFooter && !\is_string($expectedFooter)) {
-            throw new TypeError('argument 3 must be string');
+            throw new TypeError('argument 3 must be null|string');
         }
 
         list($msgPayload, $msgFooter) = self::parseMessage($signMsg);
@@ -116,6 +118,7 @@ class Version2
      * @throws \RangeException
      *
      * @return string
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public static function extractFooter($signMsg)
     {
@@ -202,22 +205,5 @@ class Version2
             \pack('C', ($int >> 40) & 0xff).
             \pack('C', ($int >> 48) & 0xff).
             \pack('C', ($int >> 56) & 0xff);
-    }
-
-    /**
-     * @param string $str
-     *
-     * @return string
-     */
-    private static function encodeUnpadded($str)
-    {
-        // For encodeUnpadded we need paragonie/constant_time_encoding
-        // >= 1.0.3, >= 2.2.0
-        // Ubuntu 18.04: php-constant-time (2.2.0-1) [universe]
-        // Fedora 28: php-paragonie-constant-time-encoding-2.2.2-4.fc28
-        // Debian 9: php-constant-time (2.0.3-1)
-        // CentOS: php-paragonie-constant-time-encoding-1.0.4-2.el7
-        // return Base64UrlSafe::encodeUnpadded($str);
-        return \rtrim(Base64UrlSafe::encode($str), '=');
     }
 }

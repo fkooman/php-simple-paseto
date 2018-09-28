@@ -28,6 +28,7 @@ class AsymmetricSecretKey
 
     /**
      * @param string $secretKey
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public function __construct($secretKey)
     {
