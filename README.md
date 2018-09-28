@@ -44,13 +44,13 @@ The API of `Version2` is the same as in
     <?php
     require_once 'vendor/autoload.php';
 
-    $keyPair = KeyPair::generate();
+    $keyPair = \fkooman\Paseto\KeyPair::generate();
     $secretKey = $keyPair->getSecretKey();
     $publicKey = $keyPair->getPublicKey();
 
     $signMsg = \fkooman\Paseto\Version2::sign('hello', $secretKey);
     // 'hello'
-    echo \fkooman\Paseto\Version2::verify($signMsg, $publicKey) . PHP_EOL;
+    echo \fkooman\Paseto\Version2::verify($signMsg, $publicKey).PHP_EOL;
 ```
 
 # Contact
