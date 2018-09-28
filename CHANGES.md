@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.2.1 (2018-09-28)
+- use symfony/polyfill-php70 instead of error_polyfill
+
 ## 0.2.0 (2018-09-28)
 - introduce `KeyPair`, `SecretKey` and `PublicKey` objects
 - throw `TypeError` when type of parameters is wrong
