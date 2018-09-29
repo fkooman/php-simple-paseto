@@ -20,6 +20,7 @@ namespace fkooman\Paseto;
 
 use LengthException;
 use ParagonIE\ConstantTime\Binary;
+use RuntimeException;
 use TypeError;
 
 class KeyPair
@@ -48,6 +49,41 @@ class KeyPair
     public static function generate()
     {
         return new self(\sodium_crypto_sign_keypair());
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return self
+     * @psalm-suppress RedundantConditionGivenDocblockType
+     */
+    public static function load($fileName)
+    {
+        if (!\is_string($fileName)) {
+            throw new TypeError('argument 1 must be string');
+        }
+        $fileData = @\file_get_contents($fileName);
+        if (false === $fileData) {
+            throw new RuntimeException(\sprintf('unable to read file "%s"', $fileName));
+        }
+
+        return new self($fileData);
+    }
+
+    /**
+     * @param string $fileName
+     *
+     * @return void
+     * @psalm-suppress RedundantConditionGivenDocblockType
+     */
+    public function save($fileName)
+    {
+        if (!\is_string($fileName)) {
+            throw new TypeError('argument 1 must be string');
+        }
+        if (false === @\file_put_contents($fileName, $this->keyPair)) {
+            throw new RuntimeException(\sprintf('unable to write file "%s"', $fileName));
+        }
     }
 
     /**
