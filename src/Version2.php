@@ -19,6 +19,8 @@
 namespace fkooman\Paseto;
 
 use fkooman\Paseto\Exception\PasetoException;
+use fkooman\Paseto\Keys\AsymmetricPublicKey;
+use fkooman\Paseto\Keys\AsymmetricSecretKey;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\ConstantTime\Binary;
 use RuntimeException;

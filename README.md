@@ -44,7 +44,7 @@ The API of `Version2` is the same as in
     <?php
     require_once 'vendor/autoload.php';
 
-    $keyPair = \fkooman\Paseto\KeyPair::generate();
+    $keyPair = \fkooman\Paseto\Keys\KeyPair::generate();
     $secretKey = $keyPair->getSecretKey();
     $publicKey = $keyPair->getPublicKey();
 

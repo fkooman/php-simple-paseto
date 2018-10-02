@@ -18,8 +18,8 @@
 
 namespace fkooman\Paseto\Tests;
 
-use fkooman\Paseto\AsymmetricPublicKey;
-use fkooman\Paseto\AsymmetricSecretKey;
+use fkooman\Paseto\Keys\AsymmetricPublicKey;
+use fkooman\Paseto\Keys\AsymmetricSecretKey;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Hex;
 use PHPUnit\Framework\TestCase;

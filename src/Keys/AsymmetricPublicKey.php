@@ -16,29 +16,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-namespace fkooman\Paseto;
+namespace fkooman\Paseto\Keys;
 
 use ParagonIE\ConstantTime\Binary;
 use TypeError;
 
-class AsymmetricSecretKey
+class AsymmetricPublicKey
 {
     /** @var string */
-    private $secretKey;
+    private $publicKey;
 
     /**
-     * @param string $secretKey
+     * @param string $publicKey
      * @psalm-suppress RedundantConditionGivenDocblockType
      */
-    public function __construct($secretKey)
+    public function __construct($publicKey)
     {
-        if (!\is_string($secretKey)) {
+        if (!\is_string($publicKey)) {
             throw new TypeError('argument 1 must be string');
         }
-        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
-            throw new \LengthException('Invalid secret key length.');
+        if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
+            throw new \LengthException('Invalid public key length.');
         }
-        $this->secretKey = $secretKey;
+        $this->publicKey = $publicKey;
     }
 
     /**
@@ -46,6 +46,6 @@ class AsymmetricSecretKey
      */
     public function getKey()
     {
-        return $this->secretKey;
+        return $this->publicKey;
     }
 }

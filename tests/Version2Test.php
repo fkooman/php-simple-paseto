@@ -19,7 +19,7 @@
 namespace fkooman\Paseto\Tests;
 
 use fkooman\Paseto\Exception\PasetoException;
-use fkooman\Paseto\KeyPair;
+use fkooman\Paseto\Keys\KeyPair;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Binary;
 use PHPUnit\Framework\TestCase;

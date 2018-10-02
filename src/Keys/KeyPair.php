@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-namespace fkooman\Paseto;
+namespace fkooman\Paseto\Keys;
 
 use LengthException;
 use ParagonIE\ConstantTime\Binary;
