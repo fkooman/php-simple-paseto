@@ -18,6 +18,8 @@
 
 namespace fkooman\Paseto\Keys;
 
+use LengthException;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\ConstantTime\Binary;
 use TypeError;
 
@@ -36,7 +38,7 @@ class AsymmetricPublicKey
             throw new TypeError('argument 1 must be string');
         }
         if (SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES !== Binary::safeStrlen($publicKey)) {
-            throw new \LengthException('Invalid public key length.');
+            throw new LengthException('invalid public key length');
         }
         $this->publicKey = $publicKey;
     }
@@ -44,7 +46,30 @@ class AsymmetricPublicKey
     /**
      * @return string
      */
-    public function getKey()
+    public function encode()
+    {
+        return Base64UrlSafe::encodeUnpadded($this->publicKey);
+    }
+
+    /**
+     * @param string $encodedString
+     *
+     * @return self
+     * @psalm-suppress RedundantConditionGivenDocblockType
+     */
+    public static function fromEncodedString($encodedString)
+    {
+        if (!\is_string($encodedString)) {
+            throw new TypeError('argument 1 must be string');
+        }
+
+        return new self(Base64UrlSafe::decode($encodedString));
+    }
+
+    /**
+     * @return string
+     */
+    public function raw()
     {
         return $this->publicKey;
     }

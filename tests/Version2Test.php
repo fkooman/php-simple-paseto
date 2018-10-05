@@ -19,7 +19,7 @@
 namespace fkooman\Paseto\Tests;
 
 use fkooman\Paseto\Exception\PasetoException;
-use fkooman\Paseto\Keys\KeyPair;
+use fkooman\Paseto\Keys\AsymmetricSecretKey;
 use fkooman\Paseto\Version2;
 use ParagonIE\ConstantTime\Binary;
 use PHPUnit\Framework\TestCase;
@@ -32,9 +32,8 @@ class Version2Test extends TestCase
      */
     public function testSign()
     {
-        $keyPair = KeyPair::generate();
-        $secretKey = $keyPair->getSecretKey();
-        $publicKey = $keyPair->getPublicKey();
+        $secretKey = AsymmetricSecretKey::generate();
+        $publicKey = $secretKey->getPublicKey();
 
         $year = (int) (\date('Y')) + 1;
         $messages = [

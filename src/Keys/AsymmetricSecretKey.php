@@ -18,6 +18,7 @@
 
 namespace fkooman\Paseto\Keys;
 
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\ConstantTime\Binary;
 use TypeError;
 
@@ -35,16 +36,61 @@ class AsymmetricSecretKey
         if (!\is_string($secretKey)) {
             throw new TypeError('argument 1 must be string');
         }
-        if (SODIUM_CRYPTO_SIGN_BYTES !== Binary::safeStrlen($secretKey)) {
-            throw new \LengthException('Invalid secret key length.');
+        if (SODIUM_CRYPTO_SIGN_SECRETKEYBYTES !== Binary::safeStrlen($secretKey)) {
+            throw new \LengthException('invalid secret key length');
         }
         $this->secretKey = $secretKey;
     }
 
     /**
+     * @return self
+     */
+    public static function generate()
+    {
+        return new self(
+            \sodium_crypto_sign_secretkey(
+                \sodium_crypto_sign_keypair()
+            )
+        );
+    }
+
+    /**
      * @return string
      */
-    public function getKey()
+    public function encode()
+    {
+        return Base64UrlSafe::encodeUnpadded($this->secretKey);
+    }
+
+    /**
+     * @param string $encodedString
+     *
+     * @return self
+     * @psalm-suppress RedundantConditionGivenDocblockType
+     */
+    public static function fromEncodedString($encodedString)
+    {
+        if (!\is_string($encodedString)) {
+            throw new TypeError('argument 1 must be string');
+        }
+
+        return new self(Base64UrlSafe::decode($encodedString));
+    }
+
+    /**
+     * @return AsymmetricPublicKey
+     */
+    public function getPublicKey()
+    {
+        return new AsymmetricPublicKey(
+            \sodium_crypto_sign_publickey_from_secretkey($this->secretKey)
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function raw()
     {
         return $this->secretKey;
     }

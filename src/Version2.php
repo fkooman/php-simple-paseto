@@ -57,7 +57,7 @@ class Version2
                     $msgFooter,
                 ]
             ),
-            $secretKey->getKey()
+            $secretKey->raw()
         );
 
         $signMsg = self::PASETO_HEADER.Base64UrlSafe::encodeUnpadded($msgData.$msgSig);
@@ -104,7 +104,7 @@ class Version2
         $valid = \sodium_crypto_sign_verify_detached(
             $msgSig,
             self::preAuthEncode([self::PASETO_HEADER, $msgData, $expectedFooter]),
-            $publicKey->getKey()
+            $publicKey->raw()
         );
         if (false === $valid) {
             throw new PasetoException('Invalid signature.');

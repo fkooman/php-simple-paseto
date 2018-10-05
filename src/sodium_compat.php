@@ -16,40 +16,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-if (!\defined('SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES')) {
-    \define('SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES', \Sodium\CRYPTO_SIGN_PUBLICKEYBYTES);
-}
-
 if (!\defined('SODIUM_CRYPTO_SIGN_BYTES')) {
     \define('SODIUM_CRYPTO_SIGN_BYTES', \Sodium\CRYPTO_SIGN_BYTES);
 }
 
-if (!\defined('SODIUM_CRYPTO_SIGN_KEYPAIRBYTES')) {
-    \define('SODIUM_CRYPTO_SIGN_KEYPAIRBYTES', \Sodium\CRYPTO_SIGN_KEYPAIRBYTES);
+if (!\defined('SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES')) {
+    \define('SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES', \Sodium\CRYPTO_SIGN_PUBLICKEYBYTES);
 }
 
-if (!\is_callable('sodium_crypto_sign_publickey')) {
-    /**
-     * @param string $keypair
-     *
-     * @return string
-     */
-    function sodium_crypto_sign_publickey($keypair)
-    {
-        return \Sodium\crypto_sign_publickey($keypair);
-    }
-}
-
-if (!\is_callable('sodium_crypto_sign_secretkey')) {
-    /**
-     * @param string $keypair
-     *
-     * @return string
-     */
-    function sodium_crypto_sign_secretkey($keypair)
-    {
-        return \Sodium\crypto_sign_secretkey($keypair);
-    }
+if (!\defined('SODIUM_CRYPTO_SIGN_SECRETKEYBYTES')) {
+    \define('SODIUM_CRYPTO_SIGN_SECRETKEYBYTES', \Sodium\CRYPTO_SIGN_SECRETKEYBYTES);
 }
 
 if (!\is_callable('sodium_crypto_sign_detached')) {
@@ -65,6 +41,41 @@ if (!\is_callable('sodium_crypto_sign_detached')) {
     }
 }
 
+if (!\is_callable('sodium_crypto_sign_keypair')) {
+    /**
+     * @return string
+     */
+    function sodium_crypto_sign_keypair()
+    {
+        return \Sodium\crypto_sign_keypair();
+    }
+}
+
+if (!\is_callable('sodium_crypto_sign_publickey_from_secretkey')) {
+    /**
+     * @param string $sk
+     * @param mixed  $keypair
+     *
+     * @return string
+     */
+    function sodium_crypto_sign_publickey_from_secretkey($sk)
+    {
+        return \Sodium\crypto_sign_publickey_from_secretkey($sk);
+    }
+}
+
+if (!\is_callable('sodium_crypto_sign_secretkey')) {
+    /**
+     * @param string $keypair
+     *
+     * @return string
+     */
+    function sodium_crypto_sign_secretkey($keypair)
+    {
+        return \Sodium\crypto_sign_secretkey($keypair);
+    }
+}
+
 if (!\is_callable('sodium_crypto_sign_verify_detached')) {
     /**
      * @param string $signature
@@ -76,15 +87,5 @@ if (!\is_callable('sodium_crypto_sign_verify_detached')) {
     function sodium_crypto_sign_verify_detached($signature, $message, $pk)
     {
         return \Sodium\crypto_sign_verify_detached($signature, $message, $pk);
-    }
-}
-
-if (!\is_callable('sodium_crypto_sign_keypair')) {
-    /**
-     * @return string
-     */
-    function sodium_crypto_sign_keypair()
-    {
-        return \Sodium\crypto_sign_keypair();
     }
 }

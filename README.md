@@ -30,12 +30,11 @@ We explicitly support CentOS / Red Hat Enterprise >= 7 with
 I really like the idea of PASETO! I need to support PHP >= 5.4, so I can't use
 [paragonie/paseto](https://github.com/paragonie/paseto) as it requires 
 PHP >= 7. So I decided to make a tiny implementation that just supports 
-`v2.public` for my 
-[OAuth Server](https://git.tuxed.net/fkooman/php-oauth2-server).
+`v2.public`.
 
 # How 
 
-The API of `Version2` is the same as in 
+The API of `Version2` is similar to the one in 
 [paragonie/paseto](https://github.com/paragonie/paseto).
 
 ## Example 
@@ -44,9 +43,8 @@ The API of `Version2` is the same as in
     <?php
     require_once 'vendor/autoload.php';
 
-    $keyPair = \fkooman\Paseto\Keys\KeyPair::generate();
-    $secretKey = $keyPair->getSecretKey();
-    $publicKey = $keyPair->getPublicKey();
+    $secretKey = \fkooman\Paseto\Keys\AsymmetricSecretKey::generate();
+    $publicKey = $secretKey->getPublicKey();
 
     $signMsg = \fkooman\Paseto\Version2::sign('hello', $secretKey);
     // 'hello'

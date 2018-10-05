@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.3.0 (...)
+- implement `AsymmetricSecretKey` and `AsymmetricPublicKey` very similar to 
+  `paragonie/paseto`
+- `KeyPair` no longer exists
+- Keys are now in the `fkooman\Paseto\Keys` namespace
+
 ## 0.2.1 (2018-09-28)
 - use symfony/polyfill-php70 instead of error_polyfill
 
