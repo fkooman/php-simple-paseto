@@ -26,10 +26,6 @@ use PHPUnit\Framework\TestCase;
 
 class Version2Test extends TestCase
 {
-    /**
-     * @covers \Version2::sign()
-     * @covers \Version2::verify()
-     */
     public function testSign()
     {
         $secretKey = AsymmetricSecretKey::generate();
@@ -62,6 +58,20 @@ class Version2Test extends TestCase
             $decode = Version2::verify($signed, $publicKey, 'footer');
             $this->assertInternalType('string', $decode);
             $this->assertSame($message, $decode);
+        }
+    }
+
+    public function testWrongSignature()
+    {
+        $secretKey = AsymmetricSecretKey::generate();
+        $publicKey = $secretKey->getPublicKey();
+        $secretKey = AsymmetricSecretKey::generate();
+        $encodedMsg = Version2::sign('test', $secretKey);
+        try {
+            Version2::verify($encodedMsg, $publicKey);
+            $this->fail();
+        } catch (PasetoException $e) {
+            $this->assertSame('invalid signature', $e->getMessage());
         }
     }
 

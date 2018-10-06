@@ -95,7 +95,7 @@ class Version2
         }
 
         if (!\hash_equals($expectedFooter, $msgFooter)) {
-            throw new PasetoException('Invalid message footer.');
+            throw new PasetoException('invalid message footer');
         }
 
         $msgPayloadLen = Binary::safeStrlen($msgPayload);
@@ -107,7 +107,7 @@ class Version2
             $publicKey->raw()
         );
         if (false === $valid) {
-            throw new PasetoException('Invalid signature.');
+            throw new PasetoException('invalid signature');
         }
 
         return $msgData;
@@ -142,7 +142,7 @@ class Version2
     private static function parseMessage($signMsg)
     {
         if (!\hash_equals(self::PASETO_HEADER, Binary::safeSubstr($signMsg, 0, 10))) {
-            throw new PasetoException('Invalid message header.');
+            throw new PasetoException('invalid message header');
         }
         $pieces = \explode('.', $signMsg);
         $count = \count($pieces);
@@ -152,7 +152,7 @@ class Version2
             case 4:
                 return [Base64UrlSafe::decode($pieces[2]), Base64UrlSafe::decode($pieces[3])];
             default:
-                throw new PasetoException('Truncated or invalid token.');
+                throw new PasetoException('truncated or invalid token');
         }
     }
 

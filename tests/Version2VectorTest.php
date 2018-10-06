@@ -70,9 +70,6 @@ class Version2VectorTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Version2::sign()
-     */
     public function testSignVectors()
     {
         // Empty string, 32-character NUL byte key.
