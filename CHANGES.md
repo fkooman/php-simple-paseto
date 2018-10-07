@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 0.3.0 (...)
+## 0.3.0 (2018-10-07)
 - implement `AsymmetricSecretKey` and `AsymmetricPublicKey` very similar to 
   `paragonie/paseto`
 - `KeyPair` no longer exists
