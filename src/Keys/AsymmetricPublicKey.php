@@ -69,6 +69,20 @@ class AsymmetricPublicKey
     /**
      * @return string
      */
+    public function getKeyId()
+    {
+        return Base64UrlSafe::encodeUnpadded(
+            \hash(
+                'sha256',
+                $this->raw(),
+                true
+            )
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function raw()
     {
         return $this->publicKey;
