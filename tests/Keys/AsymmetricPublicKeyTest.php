@@ -30,7 +30,7 @@ class AsymmetricPublicKeyTest extends TestCase
         );
         $this->assertSame(
             '9pZgMe8bC9buTlZoK7fS1Gb7tOYFnfrCuMHMQ7Nn7rE',
-            $publicKey->getKeyId()
+            $publicKey->getKid()
         );
         $this->assertSame(
             '9f8a3f3c9a10e605027887654c63de7b8cf4fad4457605952437209917bfa811',

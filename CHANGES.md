@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 0.3.1 (2018-10-08)
+- implement `AsymmetricPublicKey::getKid()`
+
 ## 0.3.0 (2018-10-07)
 - implement `AsymmetricSecretKey` and `AsymmetricPublicKey` very similar to 
   `paragonie/paseto`

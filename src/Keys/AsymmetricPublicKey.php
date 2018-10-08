@@ -69,7 +69,7 @@ class AsymmetricPublicKey
     /**
      * @return string
      */
-    public function getKeyId()
+    public function getKid()
     {
         return Base64UrlSafe::encodeUnpadded(
             \hash(
